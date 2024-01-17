@@ -20,13 +20,13 @@ public class Product {
     private String description;
 
 
-    private String price;
+    private int price;
 
     @Column(name = "discounted_price")
     private int discountedPrice;
 
-    @Column(name = "discount_present")
-    private int discountPresent;
+    @Column(name = "discount_percent")
+    private int discountPercent;
 
     private int quantity;
 
@@ -60,13 +60,13 @@ public class Product {
 
     }
 
-    public Product(Long id, String title, String description, String price, int discountedPrice, int discountPresent, int quantity, String brand, String color, Set<Size> sizes, String imageUrl, List<Rating> ratings, List<Review> reviews, int numRatings, Category category, LocalDateTime createdAt) {
+    public Product(Long id, String title, String description, int price, int discountedPrice, int discountPresent, int quantity, String brand, String color, Set<Size> sizes, String imageUrl, List<Rating> ratings, List<Review> reviews, int numRatings, Category category, LocalDateTime createdAt) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.price = price;
         this.discountedPrice = discountedPrice;
-        this.discountPresent = discountPresent;
+        this.discountPercent = discountPercent;
         this.quantity = quantity;
         this.brand = brand;
         this.color = color;
@@ -103,11 +103,11 @@ public class Product {
         this.description = description;
     }
 
-    public String getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 
@@ -119,12 +119,12 @@ public class Product {
         this.discountedPrice = discountedPrice;
     }
 
-    public int getDiscountPresent() {
-        return discountPresent;
+    public int getDiscountPercent() {
+        return discountPercent;
     }
 
-    public void setDiscountPresent(int discountPresent) {
-        this.discountPresent = discountPresent;
+    public void setDiscountPercent(int discountPercent) {
+        this.discountPercent = discountPercent;
     }
 
     public int getQuantity() {
