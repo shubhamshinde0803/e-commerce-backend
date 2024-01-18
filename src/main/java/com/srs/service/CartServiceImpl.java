@@ -2,7 +2,10 @@ package com.srs.service;
 
 import com.srs.exception.ProductException;
 import com.srs.model.Cart;
+import com.srs.model.CartItem;
+import com.srs.model.Product;
 import com.srs.model.User;
+import com.srs.repository.CartItemRepository;
 import com.srs.repository.CartRepository;
 import com.srs.request.AddItemRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,12 +35,46 @@ public class CartServiceImpl implements CartService{
     @Override
     public String addCartItem(Long userId, AddItemRequest req) throws ProductException {
         Cart cart = cartRepository.findByUserId(userId);
+        Product product = productService.findProductById(req.getProductId());
 
-        return null;
+        CartItem isPresent = cartItemService.isCartItemExist(cart, product, req.getSize(), userId);
+
+        if(isPresent == null){
+            CartItem cartItem = new CartItem();
+            cartItem.setProduct(product);
+            cartItem.setCart(cart);
+            cartItem.setQuantity(req.getQuantity());
+            cartItem.setUserId(userId);
+
+            int price = req.getQuantity()*product.getDiscountedPrice();
+            cartItem.setPrice(price);
+            cartItem.setSize(req.getSize());
+
+            CartItem createdCartItem = cartItemService.createCartItem(cartItem);
+            cart.getCartItems().add(createdCartItem);
+        }
+
+        return "Item added to cart";
     }
 
     @Override
     public Cart findUserCart(Long userId) {
-        return null;
+        Cart cart = cartRepository.findByUserId(userId);
+        int totalPrice = 0;
+        int totalDiscountedPrice = 0;
+        int totalItem = 0;
+
+        for (CartItem cartItem:cart.getCartItems()){
+            totalPrice = totalPrice + cartItem.getPrice();
+            totalDiscountedPrice = totalDiscountedPrice + cartItem.getDiscountedPrice();
+            totalItem = totalItem + cartItem.getQuantity();
+        }
+        cart.setTotalDiscountedPrice(totalDiscountedPrice);
+        cart.setTotalItem(totalItem);
+        cart.setTotalPrice(totalPrice);
+        cart.setDiscount(totalPrice - totalDiscountedPrice);
+
+
+        return cartRepository.save(cart);
     }
 }
