@@ -7,15 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "orders")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(name = "order_id")
     private String orderId;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
@@ -28,8 +30,8 @@ public class Order {
     @OneToOne
     private Address shippingAddress;
 
-    @Embedded
-    private PaymentDetails paymentDetails = new PaymentDetails();
+//    @Embedded
+//    private PaymentDetails paymentDetails = new PaymentDetails();
 
     private double totalPrice;
 
@@ -46,7 +48,7 @@ public class Order {
     public Order() {
     }
 
-    public Order(Long id, String orderId, User user, List<OrderItem> orderItems, LocalDateTime orderDate, LocalDateTime deliveryDate, Address shippingAddress, PaymentDetails paymentDetails, double totalPrice, Integer totalDiscountedPrice, Integer discount, String orderStatus, int totalItems, LocalDateTime createdAt) {
+    public Order(Long id, String orderId, User user, List<OrderItem> orderItems, LocalDateTime orderDate, LocalDateTime deliveryDate, Address shippingAddress, double totalPrice, Integer totalDiscountedPrice, Integer discount, String orderStatus, int totalItems, LocalDateTime createdAt) {
         this.id = id;
         this.orderId = orderId;
         this.user = user;
@@ -54,7 +56,7 @@ public class Order {
         this.orderDate = orderDate;
         this.deliveryDate = deliveryDate;
         this.shippingAddress = shippingAddress;
-        this.paymentDetails = paymentDetails;
+//        this.paymentDetails = paymentDetails;
         this.totalPrice = totalPrice;
         this.totalDiscountedPrice = totalDiscountedPrice;
         this.discount = discount;
@@ -119,13 +121,13 @@ public class Order {
         this.shippingAddress = shippingAddress;
     }
 
-    public PaymentDetails getPaymentDetails() {
-        return paymentDetails;
-    }
-
-    public void setPaymentDetails(PaymentDetails paymentDetails) {
-        this.paymentDetails = paymentDetails;
-    }
+//    public PaymentDetails getPaymentDetails() {
+//        return paymentDetails;
+//    }
+//
+//    public void setPaymentDetails(PaymentDetails paymentDetails) {
+//        this.paymentDetails = paymentDetails;
+//    }
 
     public double getTotalPrice() {
         return totalPrice;

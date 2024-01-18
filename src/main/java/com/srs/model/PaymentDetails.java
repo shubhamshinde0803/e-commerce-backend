@@ -1,5 +1,8 @@
 package com.srs.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
 public class PaymentDetails {
 
     private String paymentMethod;

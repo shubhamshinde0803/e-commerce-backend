@@ -1,5 +1,6 @@
 package com.srs.model;
 
+
 public class Size {
 
     private String name;

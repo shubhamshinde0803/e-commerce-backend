@@ -9,9 +9,11 @@ import com.srs.model.User;
 import com.srs.repository.CartItemRepository;
 import com.srs.repository.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Service
 public class CartItemServiceImpl implements CartItemService{
 
     @Autowired

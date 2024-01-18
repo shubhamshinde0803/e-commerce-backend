@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "addresses")
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,13 +33,16 @@ public class Address {
     @JsonIgnore
     private User user;
 
+    @OneToOne
+    private Order order;
+
     private String mobile;
 
     public Address(){
 
     }
 
-    public Address(long id, String firstName, String lastName, String streetAddress, String city, String state, String zipCode, User user, String mobile) {
+    public Address(long id, String firstName, String lastName, String streetAddress, String city, String state, String zipCode, User user, Order order, String mobile) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -46,6 +50,7 @@ public class Address {
         this.city = city;
         this.state = state;
         this.zipCode = zipCode;
+        this.order = order;
         this.user = user;
         this.mobile = mobile;
     }
@@ -104,6 +109,14 @@ public class Address {
 
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
+    }
+
+    public Order getOrder() {
+        return order;
+    }
+
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     public User getUser() {
