@@ -1,6 +1,7 @@
 package com.srs.service;
 
 import com.srs.exception.OrderException;
+import com.srs.exception.UserException;
 import com.srs.model.*;
 import com.srs.repository.*;
 import org.aspectj.weaver.ast.Or;
@@ -35,50 +36,57 @@ public class OrderServiceImpl implements OrderService{
     private OrderItemRepository orderItemRepository;
 
     @Override
-    public Order createOrder(User user, Address shippingAddress) {
-        shippingAddress.setUser(user);
-        Address address = addressRepository.save(shippingAddress);
-        user.getAddress().add(address);
-        userRepository.save(user);
+    public Order createOrder(User user, Address shippingAddress) throws UserException {
+        try {
+            System.out.println("Creating order for user: " + user.getEmail());
+            shippingAddress.setUser(user);
+            Address address = addressRepository.save(shippingAddress);
+            user.getAddress().add(address);
+            userRepository.save(user);
 
-        Cart cart = cartService.findUserCart(user.getId());
-        List<OrderItem> orderItems = new ArrayList<>();
+            Cart cart = cartService.findUserCart(user.getId());
+            List<OrderItem> orderItems = new ArrayList<>();
 
-        for (CartItem item : cart.getCartItems()){
-            OrderItem orderItem = new OrderItem();
+            for (CartItem item : cart.getCartItems()) {
+                OrderItem orderItem = new OrderItem();
 
-            orderItem.setPrice(item.getPrice());
-            orderItem.setProduct(item.getProduct());
-            orderItem.setQuantity(item.getQuantity());
-            orderItem.setSize(item.getSize());
-            orderItem.setUserId(item.getUserId());
-            orderItem.setDiscountedPrice(item.getDiscountedPrice());
+                orderItem.setPrice(item.getPrice());
+                orderItem.setProduct(item.getProduct());
+                orderItem.setQuantity(item.getQuantity());
+                orderItem.setSize(item.getSize());
+                orderItem.setUserId(item.getUserId());
+                orderItem.setDiscountedPrice(item.getDiscountedPrice());
 
-            OrderItem createdOrderItem = orderItemRepository.save(orderItem);
+                OrderItem createdOrderItem = orderItemRepository.save(orderItem);
 
-            orderItems.add(createdOrderItem);
-        }
+                orderItems.add(createdOrderItem);
+            }
 
-        Order createdOrder = new Order();
-        createdOrder.setUser(user);
-        createdOrder.setOrderItems(orderItems);
-        createdOrder.setTotalPrice(cart.getTotalPrice());
-        createdOrder.setTotalDiscountedPrice(cart.getTotalDiscountedPrice());
-        createdOrder.setDiscount(cart.getDiscount());
-        createdOrder.setTotalItems(cart.getTotalItem());
-        createdOrder.setShippingAddress(address);
-        createdOrder.setOrderDate(LocalDateTime.now());
-        createdOrder.setOrderStatus("PENDING");
+            Order createdOrder = new Order();
+            createdOrder.setUser(user);
+            createdOrder.setOrderItems(orderItems);
+            createdOrder.setTotalPrice(cart.getTotalPrice());
+            createdOrder.setTotalDiscountedPrice(cart.getTotalDiscountedPrice());
+            createdOrder.setDiscount(cart.getDiscount());
+            createdOrder.setTotalItems(cart.getTotalItem());
+            createdOrder.setShippingAddress(address);
+            createdOrder.setOrderDate(LocalDateTime.now());
+            createdOrder.setOrderStatus("PENDING");
 //        createdOrder.setPaymentDetails().setStatus("PENDING");
-        createdOrder.setCreatedAt(LocalDateTime.now());
+            createdOrder.setCreatedAt(LocalDateTime.now());
 
-        Order savedOrder = orderRepository.save(createdOrder);
+            Order savedOrder = orderRepository.save(createdOrder);
 
-        for (OrderItem item: orderItems){
-            item.setOrder(savedOrder);
-            orderItemRepository.save(item);
+            for (OrderItem item : orderItems) {
+                item.setOrder(savedOrder);
+                orderItemRepository.save(item);
+            }
+            System.out.println("order created successfully");
+            return savedOrder;
+        }catch (Exception e){
+            e.printStackTrace();
+            throw new UserException("Error creating order for user: " + user.getEmail());
         }
-        return savedOrder;
     }
 
     @Override

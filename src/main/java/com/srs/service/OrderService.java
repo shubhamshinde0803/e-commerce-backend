@@ -1,6 +1,7 @@
 package com.srs.service;
 
 import com.srs.exception.OrderException;
+import com.srs.exception.UserException;
 import com.srs.model.Address;
 import com.srs.model.Order;
 import com.srs.model.User;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    public Order createOrder(User user, Address shippingAddress);
+    public Order createOrder(User user, Address shippingAddress) throws UserException;
 
     public Order findOrderById(Long orderId) throws OrderException;
 

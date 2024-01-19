@@ -33,6 +33,9 @@ public class Address {
     @JsonIgnore
     private User user;
 
+//    @ManyToOne
+//    @JoinColumn(name = "order_id")
+//    @JsonIgnore
     @OneToOne
     private Order order;
 
