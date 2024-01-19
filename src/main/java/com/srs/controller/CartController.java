@@ -1,5 +1,6 @@
 package com.srs.controller;
 
+import com.srs.exception.CartException;
 import com.srs.exception.ProductException;
 import com.srs.exception.UserException;
 import com.srs.model.Cart;
@@ -23,7 +24,7 @@ public class CartController {
     private CartService cartService;
 
     @GetMapping("/")
-    public ResponseEntity<Cart> findUserCart(@RequestHeader("Authorization") String jwt)throws UserException{
+    public ResponseEntity<Cart> findUserCart(@RequestHeader("Authorization") String jwt)throws UserException, CartException {
         User user = userService.findUserProfileByJwt(jwt);
         Cart cart = cartService.findUserCart(user.getId());
         return new ResponseEntity<>(cart, HttpStatus.OK);

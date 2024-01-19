@@ -1,5 +1,6 @@
 package com.srs.service;
 
+import com.srs.exception.CartException;
 import com.srs.exception.ProductException;
 import com.srs.model.Cart;
 import com.srs.model.CartItem;
@@ -34,7 +35,10 @@ public class CartServiceImpl implements CartService{
 
     @Override
     public String addCartItem(Long userId, AddItemRequest req) throws ProductException {
-        Cart cart = cartRepository.findByUserId(userId);
+        Cart cart = cartRepository.findByUserId(userId) ;
+//        if (cart == null){
+//            cart = new Cart();
+//        }
         Product product = productService.findProductById(req.getProductId());
 
         CartItem isPresent = cartItemService.isCartItemExist(cart, product, req.getSize(), userId);
@@ -58,23 +62,28 @@ public class CartServiceImpl implements CartService{
     }
 
     @Override
-    public Cart findUserCart(Long userId) {
+    public Cart findUserCart(Long userId) throws CartException {
         Cart cart = cartRepository.findByUserId(userId);
         int totalPrice = 0;
         int totalDiscountedPrice = 0;
         int totalItem = 0;
 
-        for (CartItem cartItem:cart.getCartItems()){
-            totalPrice = totalPrice + cartItem.getPrice();
-            totalDiscountedPrice = totalDiscountedPrice + cartItem.getDiscountedPrice();
-            totalItem = totalItem + cartItem.getQuantity();
+        if(cart != null) {
+
+            for (CartItem cartItem : cart.getCartItems()) {
+                totalPrice = totalPrice + cartItem.getPrice();
+                totalDiscountedPrice = totalDiscountedPrice + cartItem.getDiscountedPrice();
+                totalItem = totalItem + cartItem.getQuantity();
+            }
+            cart.setTotalDiscountedPrice(totalDiscountedPrice);
+            cart.setTotalItem(totalItem);
+            cart.setTotalPrice(totalPrice);
+            cart.setDiscount(totalPrice - totalDiscountedPrice);
+
+
+            return cartRepository.save(cart);
+        } else {
+            throw new CartException("User does not have any item in cart");
         }
-        cart.setTotalDiscountedPrice(totalDiscountedPrice);
-        cart.setTotalItem(totalItem);
-        cart.setTotalPrice(totalPrice);
-        cart.setDiscount(totalPrice - totalDiscountedPrice);
-
-
-        return cartRepository.save(cart);
     }
 }

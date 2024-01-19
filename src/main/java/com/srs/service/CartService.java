@@ -1,5 +1,6 @@
 package com.srs.service;
 
+import com.srs.exception.CartException;
 import com.srs.exception.ProductException;
 import com.srs.model.Cart;
 import com.srs.model.User;
@@ -11,5 +12,5 @@ public interface CartService {
 
     public String addCartItem(Long userId, AddItemRequest req) throws ProductException;
 
-    public Cart findUserCart(Long userId);
+    public Cart findUserCart(Long userId) throws CartException;
 }
