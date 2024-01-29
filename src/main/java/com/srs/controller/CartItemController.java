@@ -31,4 +31,15 @@ public class CartItemController {
         apiResponse.setMessage("item deleted from cart");
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
+
+    @PutMapping("/{cartItemId}")
+    public ResponseEntity<ApiResponse> updateCartItemQuantity(@PathVariable Long cartItemId,@RequestParam int quantity, @RequestHeader("Authorization") String jwt) throws UserException, CartItemException{
+        User user = userService.findUserProfileByJwt(jwt);
+        cartItemService.updateCartItem(user.getId(), cartItemId, quantity);
+
+        ApiResponse apiResponse = new ApiResponse();
+        apiResponse.setStatus(true);
+        apiResponse.setMessage("item quantity updated in cart");
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
 }
